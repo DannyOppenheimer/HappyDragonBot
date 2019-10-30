@@ -899,7 +899,7 @@ client.on('message', message => {
         let tictactoeEmbed = new Discord.RichEmbed()
             .setTitle('Reply with the coordinates you would like to place your X!')
             .setColor(0x965BCA)
-            .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+            .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
             .setFooter('Beep boop, I\'m a bot!')
             .setTimestamp()
         message.channel.send(tictactoeEmbed) 
@@ -916,7 +916,7 @@ client.on('message', message => {
                     tictactoeEmbed = new Discord.RichEmbed()
                         .setTitle('Reply with the coordinates you would like to place your X!')
                         .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
                         .setFooter('Beep boop, I\'m a bot!')
                         .setTimestamp()
                     message.channel.send(tictactoeEmbed);
@@ -925,7 +925,7 @@ client.on('message', message => {
                     tictactoeEmbed = new Discord.RichEmbed()
                         .setTitle('Reply with the coordinates you would like to place your X!')
                         .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
                         .setFooter('Beep boop, I\'m a bot!')
                         .setTimestamp()
                     message.channel.send(tictactoeEmbed);
@@ -934,7 +934,7 @@ client.on('message', message => {
                     tictactoeEmbed = new Discord.RichEmbed()
                         .setTitle('Reply with the coordinates you would like to place your X!')
                         .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
                         .setFooter('Beep boop, I\'m a bot!')
                         .setTimestamp()
                     message.channel.send(tictactoeEmbed);
@@ -943,7 +943,7 @@ client.on('message', message => {
                     tictactoeEmbed = new Discord.RichEmbed()
                         .setTitle('Reply with the coordinates you would like to place your X!')
                         .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
                         .setFooter('Beep boop, I\'m a bot!')
                         .setTimestamp()
                     message.channel.send(tictactoeEmbed);
@@ -952,7 +952,7 @@ client.on('message', message => {
                     tictactoeEmbed = new Discord.RichEmbed()
                         .setTitle('Reply with the coordinates you would like to place your X!')
                         .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
                         .setFooter('Beep boop, I\'m a bot!')
                         .setTimestamp()
                     message.channel.send(tictactoeEmbed);
@@ -961,7 +961,7 @@ client.on('message', message => {
                     tictactoeEmbed = new Discord.RichEmbed()
                         .setTitle('Reply with the coordinates you would like to place your X!')
                         .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
                         .setFooter('Beep boop, I\'m a bot!')
                         .setTimestamp()
                     message.channel.send(tictactoeEmbed);
@@ -970,7 +970,7 @@ client.on('message', message => {
                     tictactoeEmbed = new Discord.RichEmbed()
                         .setTitle('Reply with the coordinates you would like to place your X!')
                         .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
                         .setFooter('Beep boop, I\'m a bot!')
                         .setTimestamp()
                     message.channel.send(tictactoeEmbed);
@@ -979,7 +979,7 @@ client.on('message', message => {
                     tictactoeEmbed = new Discord.RichEmbed()
                         .setTitle('Reply with the coordinates you would like to place your X!')
                         .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
                         .setFooter('Beep boop, I\'m a bot!')
                         .setTimestamp()
                     message.channel.send(tictactoeEmbed);
@@ -988,19 +988,18 @@ client.on('message', message => {
                     tictactoeEmbed = new Discord.RichEmbed()
                         .setTitle('Reply with the coordinates you would like to place your X!')
                         .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉   ' +  A1 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
                         .setFooter('Beep boop, I\'m a bot!')
                         .setTimestamp()
                     message.channel.send(tictactoeEmbed);
                 } 
             })
-            /*.catch(() => {
+            .catch(() => {
                 return message.channel.send('There was no collected message that passed the filter within the time limit!');
-            })*/
+            })
         )   
     }
 });
-
 
 
 let isPlaying = false;
