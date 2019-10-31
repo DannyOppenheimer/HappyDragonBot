@@ -1,13 +1,13 @@
 # HappyDragonBot
 
-***
 ```
 Key: 
-\{\} = you must actually write the text in curly brackets
-\(\) = you must actually write the text in parenthesis
-\[\] = You do not need the brackets, just the instructions inside
+{} = you must actually write the text in curly brackets
+() = you must actually write the text in parenthesis
+[] = You do not need the brackets, just the instructions inside
+
+** after a command indicates it can only be used by administrators!
 ```
-***
 
 ## Commands:
 
@@ -29,11 +29,11 @@ Latency Report:
 
 Reaction Poll:
 > \>reactionpoll (title) {body}
-*Aliases: reactpoll, rpoll*
+\n*Aliases: reactpoll, rpoll*
 
 Role Give on Reaction \*\*
 > \>reactionrole \[emoji\] \[rolegiven\]
-*Aliases: rolereaction*
+\n*Aliases: rolereaction*
 
 ### Music:
 
@@ -54,7 +54,7 @@ Skip:
 
 List account information:
 > \>money
-*Aliases: bal, balance*
+\n*Aliases: bal, balance*
 
 Daily money:
 > \>daily
@@ -62,11 +62,11 @@ Daily money:
 Lottery and Win Chance
 > \>lottery
 > \>lotterychance
-*Aliases: lotchance*
+\n*Aliases: lotchance*
 
 Store:
 > \>store
-*Aliases: shop*
+\n*Aliases: shop*
 
 Buy and item:
 > \>buy \[itemname\]
@@ -82,11 +82,11 @@ Give a user a random balance: \*\*
 
 Send a random image from a small selection in chat:
 > \>randomimage
-*Aliases: rimage*
+\n*Aliases: rimage*
 
 Play TicTacToe agaisnt AI:
 > \>tictactoe
-*Aliases: ttt*
+\n*Aliases: ttt*
 
 Duel a fellow channelmate in typing speed duel!
 > \>duel \[mentioneduser\]
