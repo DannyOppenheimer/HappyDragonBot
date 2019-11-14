@@ -23,6 +23,27 @@ let userData = JSON.parse(fs.readFileSync('./Storage/userData.json', 'utf8'));
 let items = JSON.parse(fs.readFileSync('./Storage/items.json', 'utf8'));
 const reactRoleMessages = JSON.parse(fs.readFileSync('./Storage/reactRoleMessages.json', 'utf8'));
 
+client.aliases = new Discord.Collection();
+client.commands = new Discord.Collection();
+
+fs.readdir('./commands/', (err, files) => {
+    if(err) console.log(err);
+
+    var jsfiles = files.filter(f => f.split('.').pop() === 'js');
+
+    if(jsfiles.length <= 0) { return console.log('No JavaScript command files found') }
+    else console.log(jsfiles.length + ' commands found.');
+
+    jsfiles.forEach((f, i) => {
+        var cmds = require(`./commands/${f}`);
+        console.log(`Command #${i + 1}: ${f} loading...`)
+        client.commands.set(cmds.config.command, cmds);
+        cmds.config.aliases.forEach(alias => {
+            client.aliases.set(alias, cmds.config.command);
+        });
+    });
+});
+
 const talkedRecently = new Set();
 const generalCollected = new Set();
 var nonoWords = [                                                                                                                                                                                     "fag", "fags", " fag", "negro", "nig", "nibba", "nibber", "nibbar", "nigga", "niger", "niba", "niga"]
@@ -111,28 +132,14 @@ client.on('guildMemberAdd', (guildMember) => {
 client.on('message', async(message) => {
     
     if (!message.content.startsWith(prefix) || message.author.bot) return;
-    var args = message.content.slice(prefix.length).split(' ');
-    const command = args.shift().toLowerCase();
+    var cont = message.content.slice(prefix.length).split(' ');
+    const command = cont.shift().toLowerCase();
+    var cmd = client.commands.get(command);
+    console.log(command);
 
-    if(command == 'ping') {   
-        const m = await message.channel.send("Ping?");
-        let pingEmbed = new Discord.RichEmbed()
-            .setColor('#965BCA')
-            .addField("Your ping is: ", (m.createdTimestamp - message.createdTimestamp) + "ms")
-            .addField('API Latency is: ',  `${Math.round(client.ping)}ms`)
-            .setTimestamp()
-            .setFooter('Beep boop, I\'m a bot!');   
-        m.edit(pingEmbed);
-    }
+	var commandName = client.commands.get(client.aliases.get(command)) || client.commands.get(command);
 
-    if(command == 'date') {   
-        let dateEmbed = new Discord.RichEmbed()
-            .setColor('#965BCA')
-            .addField("Date and Time: ", (moment().format('LLLL')))
-            .setFooter('Beep boop, I\'m a bot!');  
-        message.channel.send(dateEmbed);
-    }
-
+    if(commandName) commandName.run(client, message, cont);
 
     if(command === 'help') {
         message.channel.send(helpEmbed);
@@ -162,106 +169,7 @@ client.on('message', async(message) => {
 *                                                                                                                                                                 -
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-client.on('message', message => {
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
-    var args = message.content.slice(prefix.length).split(' ');
-    const command = args.shift().toLowerCase();
-    if(command === 'reactpoll' || command === 'rpoll' || command === 'reactionpoll') {
-        message.delete();
-        if (!args.length) {
-            return message.channel.send(`You didn't provide any arguments, ${message.author}! Use &rpoll (title) {Main Body}`);
-        } else {
-            if(!args[0].includes('(')) {
-                message.channel.send({embed:{
-                    title:'Incorrect Syntax: You need a \'(\'',
-                    color: 0x965BCA
-                }});
-            } else {
-                let e = 0;
-                for(e; e<args.length; e++) {
-                    if(args[e].includes(')')) {
-                        break;   
-                    } else if(args[e].includes('{')) {
-                        message.channel.send({embed:{
-                            title:'Incorrect Syntax: You need a \')\'',
-                            color: 0x965BCA
-                        }});
-                        return;
-                    }
-                }
-                if(!args[e].includes(')')) {
-                    message.channel.send({embed:{
-                        title:'Incorrect Syntax: You need a \')\'',
-                        color: 0x965BCA
-                    }});
-                } else { 
-                    e++;
-                    if(!args[e].includes('{')) {
-                        message.channel.send({embed:{
-                            title:'Incorrect Syntax: You need a \'{\'',
-                            color: 0x965BCA
-                        }});
-                    } else {
-                        for(e; e<args.length; e++) {
-                            if(args[e].includes('}')) {
-                                break;
-                            }
-                        }
-                        e = args.length - 1;
-                        if(!args[e].includes('}')) {
-                            message.channel.send({embed:{
-                                title:'Incorrect Syntax: You need a \'}\'',
-                                color: 0x965BCA
-                            }});
-                        } else {
-                            var bigBoiString = args.join(' ');
-                            var e1 = bigBoiString.replace("{", "");
-                            var e2 = e1.replace("}", "");
-                            var e3 = e2.replace("(", "**");
-                            var e4 = e3.replace(")", "**:");
-                            let pollEmbed = new Discord.RichEmbed()
-                                .setColor('#965BCA')
-                                .setTitle(e4)
-                                .setAuthor('Poll:')
-                                .setTimestamp()
-                                .setFooter('Beep boop, I\'m a bot!');
-                            message.channel.send(pollEmbed).then(sentEmbed => {
-                            sentEmbed.react('✅')
-                            sentEmbed.react('❌')
-                            });
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    else if(command === 'reactionrole' || command === 'rolereaction') {
-        if (!message.member.hasPermission("ADMINISTRATOR")) return;
-        if(args.length < 1) return message.channel.send({embed:{title:'You need arguments, use >reactionrole <emoji> <role>'}});
-        let roleName = args[1];
-        if(!message.guild.roles.find(x => x.name == roleName))  message.channel.send({embed:{title:'The second argument is not a role, use >reactionrole <emoji> <role>'}});
-        var reactMessageEmbed = new Discord.RichEmbed()
-            .setTitle('Click ' + args[0] + ' to get the ' + roleName + ' role!')
-            .setColor(0x965BCA)
-            .setTimestamp()
-            .setFooter('Beep boop, I\'m a bot!');
-        message.channel.send(reactMessageEmbed).then(embedMessage => {
-            embedMessage.react(args[0]);
-            let newId = embedMessage.id;
-            if(!reactRoleMessages[newId]) reactRoleMessages[newId] = {};
-            if(!reactRoleMessages[newId].roleName) reactRoleMessages[newId].roleName = roleName;
-            if(!reactRoleMessages[newId].emojiReact) reactRoleMessages[newId].emojiReact = args[0];
-        
-            fs.writeFile('./Storage/reactRoleMessages.json', JSON.stringify(reactRoleMessages, null, 4), (err) => {
-                if(err) console.error(err);
-            })
-        });
-    }
-});
-
-client.on('raw', (raw) => {    
+client.on('raw', (raw) => { 
     if(raw.t == 'MESSAGE_REACTION_ADD') {
         emojiNameNew = raw.d.emoji.name;
         messageID = raw.d.message_id;
@@ -271,14 +179,17 @@ client.on('raw', (raw) => {
             if(reactRoleMessages[messageID].emojiReact == emojiNameNew) {
                 const channel = client.channels.get(raw.d.channel_id);
                 channel.fetchMessage(raw.d.message_id).then(message => {
-                    const myGuilds = client.guilds.get(raw.d.guild_id);
-                    myGuilds.fetchMember(raw.d.user_id)
-                    .then(member => member.addRole(myGuilds.roles.find(role => role.name == reactRoleMessages[messageID].roleName)))
+                    var messageGuild = client.guilds.get(raw.d.guild_id);
+                    messageGuild.fetchMember(raw.d.user_id)
+                    .then(member => member.addRole(messageGuild.roles.find(role => role.name == reactRoleMessages[messageID].roleName)))
                     .catch(console.error);
                 });
-                
             }
         }
+    }
+    if(raw.t == 'MESSAGE_DELETE') {
+        //raw.d.id
+        //raw.d.guild_id
     }
 });
 
@@ -868,141 +779,12 @@ client.on('message', message => {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-client.on('message', message => {
-    let sender = message.author.id;
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
-    var args = message.content.slice(prefix.length).split(' ');
-    const command = args.shift().toLowerCase();
 
-    if(command === 'randomimage' || command == 'rimage') {
-        var imageEmbed = new Discord.RichEmbed()
-            .attachFile("./Images/"+ randomImage.toString() +".jpg")
-            .setImage('attachment://'+ randomImage.toString() + '.jpg')
-            .setColor('#965BCA')    
-            .setTimestamp()
-            .setFooter('Beep boop, I\'m a bot!');
-        message.channel.send(imageEmbed);
-    }
 
-    if(command === 'tictactoe' || command === 'ttt') {
-        var newSender = message.author;
-        var A1 = '-';
-        var A2 = '-';
-        var A3 = '-';
-        var B1 = '-';
-        var B2 = '-';
-        var B3 = '-';
-        var C1 = '-';
-        var C2 = '-';
-        var C3 = '-';
-
-        let tictactoeEmbed = new Discord.RichEmbed()
-            .setTitle('Reply with the coordinates you would like to place your X!')
-            .setColor(0x965BCA)
-            .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-            .setFooter('Beep boop, I\'m a bot!')
-            .setTimestamp()
-        message.channel.send(tictactoeEmbed) 
-        .then(
-            message.channel.awaitMessages(response => response.author.id == newSender.id, { 
-                maxMatches: 1,
-                time: 60000,
-                errors: ['time'],
-    
-            })
-            .then((collected) => {
-                if(collected.first().content === 'A1' || collected.first().content === 'a1') {
-                    A1 = 'X';
-                    tictactoeEmbed = new Discord.RichEmbed()
-                        .setTitle('Reply with the coordinates you would like to place your X!')
-                        .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-                        .setFooter('Beep boop, I\'m a bot!')
-                        .setTimestamp()
-                    message.channel.send(tictactoeEmbed);
-                } else if(collected.first().content === 'A2' || collected.first().content === 'a2') {
-                    A2 = 'X';
-                    tictactoeEmbed = new Discord.RichEmbed()
-                        .setTitle('Reply with the coordinates you would like to place your X!')
-                        .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-                        .setFooter('Beep boop, I\'m a bot!')
-                        .setTimestamp()
-                    message.channel.send(tictactoeEmbed);
-                } else if(collected.first().content === 'A3' || collected.first().content === 'a3') {
-                    A3 = 'X';
-                    tictactoeEmbed = new Discord.RichEmbed()
-                        .setTitle('Reply with the coordinates you would like to place your X!')
-                        .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-                        .setFooter('Beep boop, I\'m a bot!')
-                        .setTimestamp()
-                    message.channel.send(tictactoeEmbed);
-                } else if(collected.first().content === 'B1' || collected.first().content === 'b1') {
-                    B1 = 'X';
-                    tictactoeEmbed = new Discord.RichEmbed()
-                        .setTitle('Reply with the coordinates you would like to place your X!')
-                        .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-                        .setFooter('Beep boop, I\'m a bot!')
-                        .setTimestamp()
-                    message.channel.send(tictactoeEmbed);
-                } else if(collected.first().content === 'B2' || collected.first().content === 'b2') {
-                    B2 = 'X';
-                    tictactoeEmbed = new Discord.RichEmbed()
-                        .setTitle('Reply with the coordinates you would like to place your X!')
-                        .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-                        .setFooter('Beep boop, I\'m a bot!')
-                        .setTimestamp()
-                    message.channel.send(tictactoeEmbed);
-                } else if(collected.first().content === 'B3' || collected.first().content === 'b3') {
-                    B3 = 'X';
-                    tictactoeEmbed = new Discord.RichEmbed()
-                        .setTitle('Reply with the coordinates you would like to place your X!')
-                        .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-                        .setFooter('Beep boop, I\'m a bot!')
-                        .setTimestamp()
-                    message.channel.send(tictactoeEmbed);
-                } else if(collected.first().content === 'C1' || collected.first().content === 'c1') {
-                    C1 = 'X';
-                    tictactoeEmbed = new Discord.RichEmbed()
-                        .setTitle('Reply with the coordinates you would like to place your X!')
-                        .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-                        .setFooter('Beep boop, I\'m a bot!')
-                        .setTimestamp()
-                    message.channel.send(tictactoeEmbed);
-                } else if(collected.first().content === 'C2' || collected.first().content === 'c2') {
-                    C2 = 'X';
-                    tictactoeEmbed = new Discord.RichEmbed()
-                        .setTitle('Reply with the coordinates you would like to place your X!')
-                        .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-                        .setFooter('Beep boop, I\'m a bot!')
-                        .setTimestamp()
-                    message.channel.send(tictactoeEmbed);
-                } else if(collected.first().content === 'C3' || collected.first().content === 'c3') {
-                    C3 = 'X';
-                    tictactoeEmbed = new Discord.RichEmbed()
-                        .setTitle('Reply with the coordinates you would like to place your X!')
-                        .setColor(0x965BCA)
-                        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + A1 + ' ▉ ' +  A2 + ' ▉ ' +  A3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  B1 + '    ▉   ' +  B2 + '    ▉   ' +  B3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + C1 + '   ▉    ' + C2 + '    ▉   ' + C3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-                        .setFooter('Beep boop, I\'m a bot!')
-                        .setTimestamp()
-                    message.channel.send(tictactoeEmbed);
-                } 
-            })
-            .catch(() => {
-                return message.channel.send('There was no collected message that passed the filter within the time limit!');
-            })
-        )   
-    }
-});
 
 
 let isPlaying = false;
+
 
 client.on("message", async(message) => {
     let sender = message.author.id;
@@ -1024,7 +806,7 @@ client.on("message", async(message) => {
         .then(() => {
             isPlaying = true;
             message.channel.awaitMessages(response => response.author.id == mentioned.id || response.author.id == sender, { 
-                maxMatches: 1,
+                max: 1,
                 time: 30000,
                 errors: ['time'],
 
@@ -1042,7 +824,7 @@ client.on("message", async(message) => {
                         let randomizer = Math.floor(Math.random() * 23) + 1;
                         message.channel.send(wordyWords[randomizer]).then(() => {
                             message.channel.awaitMessages(response => ((message.author.id == sender || message.author.id == mentioned.id) && (response.content === wordyWords[randomizer])), {
-                                maxMatches: 1,
+                                max: 1,
                                 time: 10000,
                                 errors: ['time'],
                             })
