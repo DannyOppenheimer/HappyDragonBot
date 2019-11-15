@@ -2,9 +2,6 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const tttGames = JSON.parse(fs.readFileSync('./Storage/tttGames.json', 'utf8'));
 
-
-//newResponse => newResponse.author.id == newSender.id
-
 module.exports.run = async (client, message, cont) => {
     if(!tttGames[message.guild.id + message.author.id]) tttGames[message.guild.id + message.author.id] = {};
 
@@ -20,7 +17,7 @@ module.exports.run = async (client, message, cont) => {
 
     fs.writeFile('./Storage/tttGames.json', JSON.stringify(tttGames, null, 4), (err) => {
         if(err) console.error(err);
-    })
+    });
 
     tttPlayer(message);   
 }
@@ -50,25 +47,30 @@ async function tttPlayer(message) {
     .then((collected) => {
         var newSender = collected.first().author.id;
         var newGuild = collected.first().guild.id;
-        if(collected.first().content === 'A1' || collected.first().content === 'a1') {
+        var collectedLower = collected.first().content.toLowerCase();
+        if(collectedLower === 'a1') {
             tttGames[message.guild.id + message.author.id].a1 = 'X';
-        } else if(collected.first().content === 'A2' || collected.first().content === 'a2') {
+        } else if(collectedLower === 'a2') {
             tttGames[message.guild.id + message.author.id].a2 = 'X';
-        } else if(collected.first().content === 'A3' || collected.first().content === 'a3') {
+        } else if(collectedLower === 'a3') {
             tttGames[message.guild.id + message.author.id].a3 = 'X';
-        } else if(collected.first().content === 'B1' || collected.first().content === 'b1') {
+        } else if(collectedLower === 'b1') {
             tttGames[message.guild.id + message.author.id].b1 = 'X';
-        } else if(collected.first().content === 'B2' || collected.first().content === 'b2') {
+        } else if(collectedLower === 'b2') {
             tttGames[message.guild.id + message.author.id].b2 = 'X';
-        } else if(collected.first().content === 'B3' || collected.first().content === 'b3') {
+        } else if(collectedLower === 'b3') {
             tttGames[message.guild.id + message.author.id].b3 = 'X';
-        } else if(collected.first().content === 'C1' || collected.first().content === 'c1') {
+        } else if(collectedLower === 'c1') {
             tttGames[message.guild.id + message.author.id].c1 = 'X';
-        } else if(collected.first().content === 'C2' || collected.first().content === 'c2') {
+        } else if(collectedLower === 'c2') {
             tttGames[message.guild.id + message.author.id].c2 = 'X';
-        } else if(collected.first().content === 'C3' || collected.first().content === 'c3') {
+        } else if(collectedLower === 'c3') {
             tttGames[message.guild.id + message.author.id].c3 = 'X';
         }
+
+        fs.writeFile('./Storage/tttGames.json', JSON.stringify(tttGames, null, 4), (err) => {
+            if(err) console.error(err);
+        });
 
         let tictactoeEmbed = new Discord.RichEmbed()
                 .setTitle('Reply with the coordinates you would like to place your X!')
@@ -78,7 +80,7 @@ async function tttPlayer(message) {
                 .setTimestamp()
         msg.edit(tictactoeEmbed).then(() => {
             tttAI(msg, message, newSender, newGuild);
-        })
+        });
     })
     .catch(() => {
         let tictactoeEmbed = new Discord.RichEmbed()
@@ -87,154 +89,28 @@ async function tttPlayer(message) {
             .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
             .setFooter('Beep boop, I\'m a bot!')
             .setTimestamp();
-        return message.channel.send(tictactoeEmbed);
+        msg.edit(tictactoeEmbed);
+        tttAI(msg, message, newSender, newGuild);
     })
 }
 
 async function tttAI(msg, message, newSender, newGuild) {
     if((tttGames[newGuild + newSender].a1) + (tttGames[newGuild + newSender].a2) + (tttGames[newGuild + newSender].a3) === "XXX") {
-        tttGames[newGuild + newSender].a1 = "-";
-        tttGames[newGuild + newSender].a2 = "-";
-        tttGames[newGuild + newSender].a3 = "-";
-        tttGames[newGuild + newSender].b1 = "-";
-        tttGames[newGuild + newSender].b2 = "-";
-        tttGames[newGuild + newSender].b3 = "-";
-        tttGames[newGuild + newSender].c1 = "-";
-        tttGames[newGuild + newSender].c2 = "-";
-        tttGames[newGuild + newSender].c3 = "-";
-        let tictactoeEmbed = new Discord.RichEmbed()
-            .setTitle(`${message.author.username} won their TicTacToe Game!`)
-            .setColor(0x965BCA)
-            .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-            .setFooter('Beep boop, I\'m a bot!')
-            .setTimestamp()
-        return msg.edit(tictactoeEmbed);
-
+        resetOnPlayerWin(message, newGuild, newSender);
     } else if((tttGames[newGuild + newSender].b1) + (tttGames[newGuild + newSender].b2) + (tttGames[newGuild + newSender].b3) === "XXX") {
-        tttGames[newGuild + newSender].a1 = "-";
-        tttGames[newGuild + newSender].a2 = "-";
-        tttGames[newGuild + newSender].a3 = "-";
-        tttGames[newGuild + newSender].b1 = "-";
-        tttGames[newGuild + newSender].b2 = "-";
-        tttGames[newGuild + newSender].b3 = "-";
-        tttGames[newGuild + newSender].c1 = "-";
-        tttGames[newGuild + newSender].c2 = "-";
-        tttGames[newGuild + newSender].c3 = "-";
-        let tictactoeEmbed = new Discord.RichEmbed()
-            .setTitle(`${message.author.username} won their TicTacToe Game!`)
-            .setColor(0x965BCA)
-            .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-            .setFooter('Beep boop, I\'m a bot!')
-            .setTimestamp()
-        return msg.edit(tictactoeEmbed);
-
+        resetOnPlayerWin(message, newGuild, newSender);
     } else if((tttGames[newGuild + newSender].c1) + (tttGames[newGuild + newSender].c2) + (tttGames[newGuild + newSender].c3) === "XXX") {
-        tttGames[newGuild + newSender].a1 = "-";
-        tttGames[newGuild + newSender].a2 = "-";
-        tttGames[newGuild + newSender].a3 = "-";
-        tttGames[newGuild + newSender].b1 = "-";
-        tttGames[newGuild + newSender].b2 = "-";
-        tttGames[newGuild + newSender].b3 = "-";
-        tttGames[newGuild + newSender].c1 = "-";
-        tttGames[newGuild + newSender].c2 = "-";
-        tttGames[newGuild + newSender].c3 = "-";
-        let tictactoeEmbed = new Discord.RichEmbed()
-            .setTitle(`${message.author.username} won their TicTacToe Game!`)
-            .setColor(0x965BCA)
-            .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-            .setFooter('Beep boop, I\'m a bot!')
-            .setTimestamp()
-        return msg.edit(tictactoeEmbed);
-
+        resetOnPlayerWin(message, newGuild, newSender);
     } else if((tttGames[newGuild + newSender].a1) + (tttGames[newGuild + newSender].b1) + (tttGames[newGuild + newSender].c1) === "XXX") {
-        tttGames[newGuild + newSender].a1 = "-";
-        tttGames[newGuild + newSender].a2 = "-";
-        tttGames[newGuild + newSender].a3 = "-";
-        tttGames[newGuild + newSender].b1 = "-";
-        tttGames[newGuild + newSender].b2 = "-";
-        tttGames[newGuild + newSender].b3 = "-";
-        tttGames[newGuild + newSender].c1 = "-";
-        tttGames[newGuild + newSender].c2 = "-";
-        tttGames[newGuild + newSender].c3 = "-";
-        let tictactoeEmbed = new Discord.RichEmbed()
-            .setTitle(`${message.author.username} won their TicTacToe Game!`)
-            .setColor(0x965BCA)
-            .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-            .setFooter('Beep boop, I\'m a bot!')
-            .setTimestamp()
-        return msg.edit(tictactoeEmbed);
-
+        resetOnPlayerWin(message, newGuild, newSender);
     } else if((tttGames[newGuild + newSender].a2) + (tttGames[newGuild + newSender].b2) + (tttGames[newGuild + newSender].c2) === "XXX") {
-        tttGames[newGuild + newSender].a1 = "-";
-        tttGames[newGuild + newSender].a2 = "-";
-        tttGames[newGuild + newSender].a3 = "-";
-        tttGames[newGuild + newSender].b1 = "-";
-        tttGames[newGuild + newSender].b2 = "-";
-        tttGames[newGuild + newSender].b3 = "-";
-        tttGames[newGuild + newSender].c1 = "-";
-        tttGames[newGuild + newSender].c2 = "-";
-        tttGames[newGuild + newSender].c3 = "-";
-        let tictactoeEmbed = new Discord.RichEmbed()
-            .setTitle(`${message.author.username} won their TicTacToe Game!`)
-            .setColor(0x965BCA)
-            .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-            .setFooter('Beep boop, I\'m a bot!')
-            .setTimestamp()
-        return msg.edit(tictactoeEmbed);
-
+        resetOnPlayerWin(message, newGuild, newSender);
     } else if((tttGames[newGuild + newSender].a3) + (tttGames[newGuild + newSender].b3) + (tttGames[newGuild + newSender].c3) === "XXX") {
-        tttGames[newGuild + newSender].a1 = "-";
-        tttGames[newGuild + newSender].a2 = "-";
-        tttGames[newGuild + newSender].a3 = "-";
-        tttGames[newGuild + newSender].b1 = "-";
-        tttGames[newGuild + newSender].b2 = "-";
-        tttGames[newGuild + newSender].b3 = "-";
-        tttGames[newGuild + newSender].c1 = "-";
-        tttGames[newGuild + newSender].c2 = "-";
-        tttGames[newGuild + newSender].c3 = "-";
-        let tictactoeEmbed = new Discord.RichEmbed()
-            .setTitle(`${message.author.username} won their TicTacToe Game!`)
-            .setColor(0x965BCA)
-            .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-            .setFooter('Beep boop, I\'m a bot!')
-            .setTimestamp()
-        return msg.edit(tictactoeEmbed);
-
+        resetOnPlayerWin(message, newGuild, newSender);
     } else if((tttGames[newGuild + newSender].a1) + (tttGames[newGuild + newSender].b2) + (tttGames[newGuild + newSender].c3) === "XXX") {
-        tttGames[newGuild + newSender].a1 = "-";
-        tttGames[newGuild + newSender].a2 = "-";
-        tttGames[newGuild + newSender].a3 = "-";
-        tttGames[newGuild + newSender].b1 = "-";
-        tttGames[newGuild + newSender].b2 = "-";
-        tttGames[newGuild + newSender].b3 = "-";
-        tttGames[newGuild + newSender].c1 = "-";
-        tttGames[newGuild + newSender].c2 = "-";
-        tttGames[newGuild + newSender].c3 = "-";
-        let tictactoeEmbed = new Discord.RichEmbed()
-            .setTitle(`${message.author.username} won their TicTacToe Game!`)
-            .setColor(0x965BCA)
-            .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-            .setFooter('Beep boop, I\'m a bot!')
-            .setTimestamp()
-        return msg.edit(tictactoeEmbed);
-
+        resetOnPlayerWin(message, newGuild, newSender);
     } else if((tttGames[newGuild + newSender].a3) + (tttGames[newGuild + newSender].b2) + (tttGames[newGuild + newSender].c1) === "XXX") {
-        tttGames[newGuild + newSender].a1 = "-";
-        tttGames[newGuild + newSender].a2 = "-";
-        tttGames[newGuild + newSender].a3 = "-";
-        tttGames[newGuild + newSender].b1 = "-";
-        tttGames[newGuild + newSender].b2 = "-";
-        tttGames[newGuild + newSender].b3 = "-";
-        tttGames[newGuild + newSender].c1 = "-";
-        tttGames[newGuild + newSender].c2 = "-";
-        tttGames[newGuild + newSender].c3 = "-";
-        let tictactoeEmbed = new Discord.RichEmbed()
-            .setTitle(`${message.author.username} won their TicTacToe Game!`)
-            .setColor(0x965BCA)
-            .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
-            .setFooter('Beep boop, I\'m a bot!')
-            .setTimestamp()
-        return msg.edit(tictactoeEmbed);
+        resetOnPlayerWin(message, newGuild, newSender);
     } else {
         if(tttGames[newGuild + newSender].a1 + tttGames[newGuild + newSender].a2 == 'XX') {
             tttGames[newGuild + newSender].a3 = 'O';
@@ -269,6 +145,7 @@ async function tttAI(msg, message, newSender, newGuild) {
         } else if(tttGames[newGuild + newSender].c1 + tttGames[newGuild + newSender].a3 == 'XX') {
             tttGames[newGuild + newSender].b2 = 'O';
         } else {
+            //
             if(tttGames[newGuild + newSender].b2 == '-') {
                 tttGames[newGuild + newSender].b2 = 'O'
             } else if(tttGames[newGuild + newSender].a1 == '-') {
@@ -287,8 +164,11 @@ async function tttAI(msg, message, newSender, newGuild) {
                 tttGames[newGuild + newSender].a2 = 'O'
             } else if(tttGames[newGuild + newSender].c2 == '-') {
                 tttGames[newGuild + newSender].c2 = 'O'
-            }
+            }  
         }
+        fs.writeFile('./Storage/tttGames.json', JSON.stringify(tttGames, null, 4), (err) => {
+            if(err) console.error(err);
+        });
         let tictactoeEmbed = new Discord.RichEmbed()
             .setTitle('Reply with the coordinates you would like to place your X!')
             .setColor(0x965BCA)
@@ -297,7 +177,7 @@ async function tttAI(msg, message, newSender, newGuild) {
             .setTimestamp()
         msg.edit(tictactoeEmbed).then(() => {
             tttPlayer2(msg, message, newSender, newGuild);
-        })
+        });
     }
 }
 
@@ -309,6 +189,26 @@ async function tttAI(msg, message, newSender, newGuild) {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 async function tttPlayer2(msg, message, newSender, newGuild) {
+
+    ///
+    if((tttGames[newGuild + newSender].a1) + (tttGames[newGuild + newSender].a2) + (tttGames[newGuild + newSender].a3) === "OOO") {
+        resetOnAIWin(message, newGuild, newSender);
+    } else if((tttGames[newGuild + newSender].b1) + (tttGames[newGuild + newSender].b2) + (tttGames[newGuild + newSender].b3) === "OOO") {
+        resetOnAIWin(message, newGuild, newSender);
+    } else if((tttGames[newGuild + newSender].c1) + (tttGames[newGuild + newSender].c2) + (tttGames[newGuild + newSender].c3) === "OOO") {
+        resetOnAIWin(message, newGuild, newSender);
+    } else if((tttGames[newGuild + newSender].a1) + (tttGames[newGuild + newSender].b1) + (tttGames[newGuild + newSender].c1) === "OOO") {
+        resetOnAIWin(message, newGuild, newSender);
+    } else if((tttGames[newGuild + newSender].a2) + (tttGames[newGuild + newSender].b2) + (tttGames[newGuild + newSender].c2) === "OOO") {
+        resetOnAIWin(message, newGuild, newSender);
+    } else if((tttGames[newGuild + newSender].a3) + (tttGames[newGuild + newSender].b3) + (tttGames[newGuild + newSender].c3) === "OOO") {
+        resetOnAIWin(message)
+    } else if((tttGames[newGuild + newSender].a3) + (tttGames[newGuild + newSender].b2) + (tttGames[newGuild + newSender].c1) === "OOO") {
+        resetOnAIWin(message, newGuild, newSender);
+    } else if((tttGames[newGuild + newSender].a1) + (tttGames[newGuild + newSender].b2) + (tttGames[newGuild + newSender].c3) === "OOO") {
+        resetOnAIWin(message, newGuild, newSender);
+    }
+
     const tttFilter = response => ((response.content.toLowerCase().includes('a1') || response.content.toLowerCase().includes('a2') || response.content.toLowerCase().includes('a3') || response.content.toLowerCase().includes('b1') || response.content.toLowerCase().includes('b2') || response.content.toLowerCase().includes('b3') || response.content.toLowerCase().includes('c1') || response.content.toLowerCase().includes('c2') || response.content.toLowerCase().includes('c3')) && (tttGames[response.guild.id + response.author.id]))
 
     msg.channel.awaitMessages(tttFilter, { 
@@ -320,7 +220,6 @@ async function tttPlayer2(msg, message, newSender, newGuild) {
     .then((collected) => {
         var newSender = collected.first().author.id;
         var newGuild = collected.first().guild.id;
-        var collectedContent = collected.first().content;
 
         if(tttGames[message.guild.id + message.author.id].collectedContent != '-' ) {
             let tictactoeEmbed = new Discord.RichEmbed()
@@ -353,6 +252,10 @@ async function tttPlayer2(msg, message, newSender, newGuild) {
             tttGames[message.guild.id + message.author.id].c3 = 'X';
         }
 
+        fs.writeFile('./Storage/tttGames.json', JSON.stringify(tttGames, null, 4), (err) => {
+            if(err) console.error(err);
+        });
+
         let tictactoeEmbed = new Discord.RichEmbed()
                 .setTitle('Reply with the coordinates you would like to place your X!')
                 .setColor(0x965BCA)
@@ -361,7 +264,7 @@ async function tttPlayer2(msg, message, newSender, newGuild) {
                 .setTimestamp()
         msg.edit(tictactoeEmbed).then(() => {
             tttAI(msg, message, newSender, newGuild);
-        })
+        });
     })
     .catch(() => {
         let tictactoeEmbed = new Discord.RichEmbed()
@@ -370,6 +273,46 @@ async function tttPlayer2(msg, message, newSender, newGuild) {
             .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
             .setFooter('Beep boop, I\'m a bot!')
             .setTimestamp();
-        return message.channel.send(tictactoeEmbed);
-    })
+        msg.edit(tictactoeEmbed);
+        tttAI(msg, message, newSender, newGuild);
+    });
+}
+
+async function resetOnPlayerWin(message) {
+    tttGames[newGuild + newSender].a1 = "-";
+    tttGames[newGuild + newSender].a2 = "-";
+    tttGames[newGuild + newSender].a3 = "-";
+    tttGames[newGuild + newSender].b1 = "-";
+    tttGames[newGuild + newSender].b2 = "-";
+    tttGames[newGuild + newSender].b3 = "-";
+    tttGames[newGuild + newSender].c1 = "-";
+    tttGames[newGuild + newSender].c2 = "-";
+    tttGames[newGuild + newSender].c3 = "-";
+    let tictactoeEmbed = new Discord.RichEmbed()
+        .setTitle(`${message.author.username} won their TicTacToe Game!`)
+        .setColor(0x965BCA)
+        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+        .setFooter('Beep boop, I\'m a bot!')
+        .setTimestamp()
+    return msg.edit(tictactoeEmbed);
+}
+
+async function resetOnAIWin(message) {
+    tttGames[newGuild + newSender].a1 = "-";
+    tttGames[newGuild + newSender].a2 = "-";
+    tttGames[newGuild + newSender].a3 = "-";
+    tttGames[newGuild + newSender].b1 = "-";
+    tttGames[newGuild + newSender].b2 = "-";
+    tttGames[newGuild + newSender].b3 = "-";
+    tttGames[newGuild + newSender].c1 = "-";
+    tttGames[newGuild + newSender].c2 = "-";
+    tttGames[newGuild + newSender].c3 = "-";
+    let tictactoeEmbed = new Discord.RichEmbed()
+        .setTitle(`${message.author.username} has lost their game to the AI :(`)
+        .setColor(0x965BCA)
+        .addField("Board:", '-------1----2----3---- \n----▉ ▉ ▉ ▉ ▉ ▉\nA-- ▉ ' + tttGames[message.guild.id + message.author.id].a1 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a2 + ' ▉ ' +  tttGames[message.guild.id + message.author.id].a3 + ' ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nB-- ▉   ' +  tttGames[message.guild.id + message.author.id].b1 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b2 + '    ▉   ' +  tttGames[message.guild.id + message.author.id].b3 + '    ▉\n----▉ ▉ ▉ ▉ ▉ ▉\nC-- ▉   ' + tttGames[message.guild.id + message.author.id].c1 + '   ▉    ' + tttGames[message.guild.id + message.author.id].c2 + '    ▉   ' + tttGames[message.guild.id + message.author.id].c3 + "    ▉\n----▉ ▉ ▉ ▉ ▉ ▉")
+        .setFooter('Beep boop, I\'m a bot!')
+        .setTimestamp()
+    return msg.edit(tictactoeEmbed);
+
 }
