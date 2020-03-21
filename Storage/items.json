@@ -1,0 +1,8 @@
+{
+    "DJ": {
+        "name":"DJ Role",
+        "type": "Role",
+        "price": "5000",
+        "desc":"Buying this gives you the DJ role."
+    }
+}
